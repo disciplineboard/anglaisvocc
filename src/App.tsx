@@ -63,17 +63,21 @@ export default function App() {
 
     // Update char stats
     if (value.length > userInput.length) {
-      const lastChar = value[value.length - 1].toLowerCase();
-      const expectedChar = currentWord.en[value.length - 1].toLowerCase();
-      setStats(prev => ({
-        ...prev,
-        totalChars: prev.totalChars + 1,
-        correctChars: prev.correctChars + (lastChar === expectedChar ? 1 : 0)
-      }));
+      const charIndex = value.length - 1;
+      const lastChar = value[charIndex]?.toLowerCase();
+      const expectedChar = currentWord?.en?.[charIndex]?.toLowerCase();
+      
+      if (lastChar !== undefined) {
+        setStats(prev => ({
+          ...prev,
+          totalChars: prev.totalChars + 1,
+          correctChars: prev.correctChars + (expectedChar !== undefined && lastChar === expectedChar ? 1 : 0)
+        }));
+      }
     }
 
     // Check if word is complete and correct
-    if (value.toLowerCase() === currentWord.en.toLowerCase()) {
+    if (currentWord?.en && value.toLowerCase() === currentWord.en.toLowerCase()) {
       setStats(prev => ({
         ...prev,
         totalTyped: prev.totalTyped + 1,
@@ -216,13 +220,13 @@ export default function App() {
                   </span>
                   
                   <h3 className="text-4xl md:text-5xl font-bold text-white mb-8 tracking-tight">
-                    {currentWord.fr}
+                    {currentWord?.fr}
                   </h3>
 
                   <div className="flex justify-center flex-wrap gap-1 text-4xl md:text-6xl font-black tracking-tight mb-8">
-                    {currentWord.en.split('').map((char, index) => {
+                    {currentWord?.en?.split('').map((char, index) => {
                       const isTyped = index < userInput.length;
-                      const isCorrect = isTyped && userInput[index].toLowerCase() === char.toLowerCase();
+                      const isCorrect = isTyped && userInput[index]?.toLowerCase() === char.toLowerCase();
                       
                       return (
                         <motion.span 
@@ -261,7 +265,7 @@ export default function App() {
 
                 {/* Success indicator */}
                 <AnimatePresence>
-                  {userInput.toLowerCase() === currentWord.en.toLowerCase() && (
+                  {currentWord?.en && userInput.toLowerCase() === currentWord.en.toLowerCase() && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -304,7 +308,7 @@ export default function App() {
                   <div className="absolute inset-0 backface-hidden bg-slate-900 border-2 border-indigo-500/30 rounded-3xl flex flex-col items-center justify-center p-12 shadow-2xl">
                     <BookOpen className="w-12 h-12 text-indigo-400 mb-6" />
                     <span className="text-slate-500 text-sm uppercase tracking-widest mb-2">Anglais</span>
-                    <h3 className="text-5xl font-bold text-center">{currentWord.en}</h3>
+                    <h3 className="text-5xl font-bold text-center">{currentWord?.en}</h3>
                     <p className="mt-12 text-slate-500 text-sm italic">Cliquez pour voir la traduction</p>
                   </div>
 
@@ -313,7 +317,7 @@ export default function App() {
                     <CheckCircle2 className="w-12 h-12 text-white mb-6" />
                     <span className="text-indigo-200 text-sm uppercase tracking-widest mb-2">Français</span>
                     <h3 className="text-4xl font-bold text-center text-white">
-                      {currentWord.fr}
+                      {currentWord?.fr}
                     </h3>
                     <p className="mt-12 text-indigo-200 text-sm">Prêt pour le suivant ?</p>
                   </div>
